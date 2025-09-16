@@ -1,0 +1,23 @@
+version: "3.9"
+services:
+  ml-service:
+    build:
+      context: ./ml-service
+    image: logs-ml-service:latest
+    container_name: logs-ml-service
+    ports:
+      - "8000:8000"
+
+  backend:
+    build:
+      context: .
+    image: logs-backend:latest
+    container_name: logs-backend
+    depends_on:
+      - ml-service
+    environment:
+      - PORT=3000
+      - THRESHOLD=0.8
+      - ML_URL=http://ml-service:8000/score
+    ports:
+      - "3000:3000"
